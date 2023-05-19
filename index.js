@@ -19,6 +19,14 @@ app.get("/", async (req, res) => {
     res.json({ status: 'Bark Bark ready to roll' });
 });
 
+app.get("/ahmad", async (req, res) => {
+    res.json({status: 'Ahmad hello world is the best app'});
+});
+
+app.get("/waleed", async (req, res) => {
+    res.json({status: 'Hello Waleed is the good boy!'});
+});
+
 app.get("/:breed", async (req, res) => {
     const breed = req.params.breed;
     const query = db.collection('dogs').where('name', '==', breed);
@@ -70,10 +78,3 @@ app.delete('/:id', async (req, res) => {
     }
 });
 
-app.get("/ahmad", async (req, res) => {
-    res.json({status: 'Ahmad hello world is the best app'});
-});
-
-app.get("/waleed", async (req, res) => {
-    res.json({status: 'Hello Waleed is the good boy!'});
-});
