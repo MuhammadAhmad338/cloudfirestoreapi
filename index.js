@@ -70,3 +70,6 @@ app.delete('/:id', async (req, res) => {
     }
 });
 
+app.get("/ahmad", (req, res) => {
+    res.json({status: "Hello Ahmad your api is deployed!"});
+});
