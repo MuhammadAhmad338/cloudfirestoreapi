@@ -71,5 +71,5 @@ app.delete('/:id', async (req, res) => {
 });
 
 app.get("/ahmad", async (req, res) => {
-    res.json({status: "Hello Ahmad your api is deployed!"});
+    res.json({status: 'Ahmad hello world is the best app'});
 });
