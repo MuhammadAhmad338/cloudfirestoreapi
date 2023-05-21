@@ -42,6 +42,17 @@ app.get("/:breed", async (req, res) => {
     }
 }); 
 
+app.get('/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = db.collection('dogs').where('id', '==', id);
+    const querySnapshot = await query.get();
+    if (querySnapshot.size > 0) {
+        res.json(querySnapshot.docs[0].data());
+    } else {
+       res.json({status: 'Not Found!'});
+    }
+});
+
 app.post("/", async (req, res) => {
     const data = {
         id: req.body.id,
