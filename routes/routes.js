@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Firestore = require("@google-cloud/firestore");
+const useMiddleware = require('../middlewares/middlewares');
 const path = require("path");
 
 const db = new Firestore({
     projectId: 'famous-rhythm-362419',
     keyFilename: path.join(__dirname, '../creds.json')
 });
-
+router.use(useMiddleware);
 router.get("/", (req, res) => {
     try {
         res.json({status: "Bark Bark! api is listening!"})

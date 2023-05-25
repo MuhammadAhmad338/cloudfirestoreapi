@@ -6,7 +6,6 @@ const routes = require("./routes/routes");
 
 const app = express();
 
-
 app.use(express.json());
 // Enable CORS for all routes
 app.use(cors());
