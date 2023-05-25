@@ -11,6 +11,7 @@ app.use(express.json());
 // Enable CORS for all routes
 app.use(cors());
 
+//My routes are all that
 app.use('/', routes);
 
 const port = process.env.PORT || 8080;
