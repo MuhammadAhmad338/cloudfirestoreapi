@@ -1,7 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const path = require('path');
-const Firestore = require("@google-cloud/firestore");
 const routes = require("./routes/routes");
 
 const app = express();
