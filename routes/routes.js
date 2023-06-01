@@ -35,11 +35,21 @@ router.get('/:id', async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const collectionQuery = db.collection('dogs');
-    const querySnapshot = await collectionQuery.get();
-    res.json(querySnapshot.docs);
-    } catch(err) {
-        res.json({status: "Not Found! "});
+        let collectionQuery = db.collection('dogs');
+        collectionQuery.get().then((snapshot) => {
+            const dogs = snapshot.docs.map((doc) => {
+                return {
+                  lifeExpectancy: doc.data().lifeExpectancy,
+                  origin: doc.data().origin,
+                  name: doc.data().name,
+                  id: doc.data().id,
+                  type: doc.data().type,
+                };
+              });
+              res.json(collectionQuery);       
+          });
+    } catch (error) {
+        res.json({ status: 'Not Found!' });
     }
 });
 
