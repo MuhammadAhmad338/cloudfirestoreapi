@@ -34,12 +34,12 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-    const query = db.collection('dogs').doc();
-    const querySnapshot = await query.get();
-    if (querySnapshot.data) {
-        res.json({ status: querySnapshot.data });
-    } else {
-        res.json({ status: 'Not Found!' });
+    try {
+        const collectionQuery = db.collection('dogs');
+    const querySnapshot = await collectionQuery.get();
+    res.json(querySnapshot.docs);
+    } catch(err) {
+        res.json({status: "Not Found! "});
     }
 });
 
