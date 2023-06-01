@@ -9,13 +9,6 @@ const db = new Firestore({
     keyFilename: path.join(__dirname, '../creds.json')
 });
 router.use(useMiddleware);
-router.get("/", (req, res) => {
-    try {
-        res.json({ status: "Bark Bark! api is listening!" })
-    } catch (e) {
-        res.json({ status: "Some error occured!" });
-    }
-});
 
 router.get('/:breed', async (req, res) => {
     const breed = req.params.breed;
