@@ -46,7 +46,7 @@ router.get("/", async (req, res) => {
                   type: doc.data().type,
                 };
               });
-              res.json(collectionQuery);       
+              res.json(dogs);       
           });
     } catch (error) {
         res.json({ status: 'Not Found!' });
