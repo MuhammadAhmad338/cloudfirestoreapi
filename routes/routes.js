@@ -11,9 +11,9 @@ const db = new Firestore({
 router.use(useMiddleware);
 router.get("/", (req, res) => {
     try {
-        res.json({status: "Bark Bark! api is listening!"})
-    } catch(e) {
-        res.json({status: "Some error occured!"});
+        res.json({ status: "Bark Bark! api is listening!" })
+    } catch (e) {
+        res.json({ status: "Some error occured!" });
     }
 });
 
@@ -36,7 +36,17 @@ router.get('/:id', async (req, res) => {
     if (querySnapshot.size > 0) {
         res.json(querySnapshot.docs[0].data());
     } else {
-        res.json({status: 'Not Found!'});
+        res.json({ status: 'Not Found!' });
+    }
+});
+
+router.get("/", async (req, res) => {
+    const query = db.collection('dogs').doc();
+    const querySnapshot = await query.get();
+    if (querySnapshot.data) {
+        res.json({ status: querySnapshot.data });
+    } else {
+        res.json({ status: 'Not Found!' });
     }
 });
 
@@ -63,9 +73,9 @@ router.put('/edit/:id', async (req, res) => {
         }
         await db.collection('dogs').doc(id).update(data);
 
-        res.json({status: 'Success updated', data: {updateDog: data}});
-    } catch(error) {
-        res.json({status: `Some error occured ${error}`});
+        res.json({ status: 'Success updated', data: { updateDog: data } });
+    } catch (error) {
+        res.json({ status: `Some error occured ${error}` });
     }
 });
 
@@ -73,9 +83,9 @@ router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
         await db.collection('dogs').doc(id).delete();
-        res.json({status: "Got Deleted"});
-    } catch(error) {
-        res.json({status: `Some error Occured ${error}`});
+        res.json({ status: "Got Deleted" });
+    } catch (error) {
+        res.json({ status: `Some error Occured ${error}` });
     }
 });
 
