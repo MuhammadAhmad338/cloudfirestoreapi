@@ -2,12 +2,28 @@ const express = require('express');
 const router = express.Router();
 const Firestore = require("@google-cloud/firestore");
 const useMiddleware = require('../middlewares/middlewares');
+const { Storage } = require("@google-cloud/storage");
 const path = require("path");
 
+const bucketName = "bucket_dog";
+const fileName = "jordan.png";
+// Creates a client using Application Default Credentials
 const db = new Firestore({
     projectId: 'famous-rhythm-362419',
     keyFilename: path.join(__dirname, '../creds.json')
 });
+// Creates a client using Application Default Credentials
+const storage = new Storage( {
+    projectId: 'famous-rhythm-362419',
+    keyFilename: path.join(__dirname, '../creds.json')
+});
+// It is very important and to get the signed url from the cloud storage google cloud
+const options = {
+    version: 'v4',
+    action: 'read',
+    expires: Date.now() + 30 * 60 * 1000, // 15 minutes
+};
+
 router.use(useMiddleware);
 
 router.get('/:breed', async (req, res) => {
@@ -59,8 +75,14 @@ router.post("/", async (req, res) => {
         lifeExpectancy: req.body.lifeExpectancy,
         name: req.body.name,
         origin: req.body.origin,
-        type: req.body.type
+        type: req.body.type,
+        imageUrl: req.body.imageUrl
     }
+    console.log(data);
+    await storage.bucket(bucketName).upload(data.imageUrl);
+    var downloadUrl = await storage.bucket(bucketName).file(data.imageUrl).getSignedUrl(options);
+    // Here we are setting the imageFile to the uploadedsignedImageUrl
+    data.imageUrl = downloadUrl;
     await db.collection('dogs').doc(`${req.body.id}`).set(data);
     res.json({ status: 'success', data: { dog: data } });
 });
