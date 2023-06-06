@@ -75,8 +75,6 @@ router.post("/", async (req, res) => {
         type: req.body.type,
         imageUrl: req.body.imageUrl
     }
-    console.log(data);
-    console.log(uuid.v4());
     const uniqueFilename = `${uuid.v4()}${data.imageUrl}`;
     const file = storage.bucket(bucketName).file(uniqueFilename);
 
