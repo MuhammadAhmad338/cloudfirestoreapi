@@ -16,9 +16,10 @@ authRouter.post("/signUp", async (req, res) => {
         const username = req.body.username;
         const email = req.body.email;
         const password = req.body.password;
-        
+        console.log(password);
+        console.log(email);
         const user = await db.collection("users").doc(username).get();
-        if (user) {
+        if (user.data()) {
           res.json({status: "User already exists in the database"});
         } else {
             const hashedPassword = await bcrypt.hash(password, 10);
