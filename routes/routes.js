@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Firestore = require("@google-cloud/firestore");
-const useMiddleware = require('../middlewares/middlewares');
 const { Storage } = require("@google-cloud/storage");
 const path = require("path");
+const uuid = require("uuid");
 
 const bucketName = "bucket_dog";
-const fileName = "jordan.png";
 // Creates a client using Application Default Credentials
 const db = new Firestore({
     projectId: 'famous-rhythm-362419',
@@ -23,8 +22,6 @@ const options = {
     action: 'read',
     expires: Date.now() + 30 * 60 * 1000, // 15 minutes
 };
-
-router.use(useMiddleware);
 
 router.get('/:breed', async (req, res) => {
     const breed = req.params.breed;
@@ -79,10 +76,14 @@ router.post("/", async (req, res) => {
         imageUrl: req.body.imageUrl
     }
     console.log(data);
-    await storage.bucket(bucketName).upload(data.imageUrl);
-    var downloadUrl = await storage.bucket(bucketName).file(data.imageUrl).getSignedUrl(options);
-    // Here we are setting the imageFile to the uploadedsignedImageUrl
-    data.imageUrl = downloadUrl;
+    console.log(uuid.v4());
+    const uniqueFilename = `${uuid.v4()}${data.imageUrl}`;
+    const file = storage.bucket(bucketName).file(uniqueFilename);
+
+    await file.save('Hello, World!')
+    console.log(`File ${uniqueFilename} uploaded.`)
+    //var downloadUrl = await storage.bucket(bucketName).file(`${uuid.v4()}-${data.imageUrl}`).getSignedUrl(options);
+   //  data.imageUrl = downloadUrl;
     await db.collection('dogs').doc(`${req.body.id}`).set(data);
     res.json({ status: 'success', data: { dog: data } });
 });
