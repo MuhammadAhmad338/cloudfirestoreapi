@@ -36,7 +36,6 @@ authRouter.get('/alltheUsers', isAuthenticated, async (req, res) => {
     await db.collection("users").get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
-                console.log(doc.id, "=>", doc.data());
                 usersList.push(doc.data());
             });
         }).catch((error) => {
