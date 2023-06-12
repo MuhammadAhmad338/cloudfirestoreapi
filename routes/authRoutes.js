@@ -16,7 +16,7 @@ const secret = "my-secret-key";
 authRouter.get("/myUsers", isAuthenticated, async (req, res) => {
     // If the user is not authenticated, return an error
     if (!req.user) {
-        return res.status(401).send('Unauthorized123');
+         res.status(401).json('User Unauthorized!');
     }
     // The user is authenticated, so return the user data
     const user = await db.collection("users").doc(req.user.username).get();
@@ -27,6 +27,18 @@ authRouter.get("/myUsers", isAuthenticated, async (req, res) => {
     }
 });
 
+authRouter.get('/alltheUsers', isAuthenticated, async (req, res) => {
+    if (!req.user) {
+        res.status(401).json({ status: 'User Unauthorized!' });
+    }
+    const users = await db.collection("users").get();
+    if (!users.data()) {
+          res.status(401).json({ status: "Users doesnot exists"});
+    } else {
+        res.status(200).json(users.data());
+    }
+});
+
 authRouter.post("/signUp", async (req, res) => {
     const username = req.body.username;
     const email = req.body.email;
@@ -34,7 +46,7 @@ authRouter.post("/signUp", async (req, res) => {
 
     const user = await db.collection("users").doc(username).get();
     if (user.data()) {
-        res.json({ status: "User already exists in the database" });
+        res.json({ status: "User already exists in the Database" });
     } else {
         const hashedPassword = await bcrypt.hash(password, 10);
         //Create new user in the database cloud firstore database
