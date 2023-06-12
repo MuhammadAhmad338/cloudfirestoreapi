@@ -39,7 +39,7 @@ authRouter.get('/alltheUsers', isAuthenticated, async (req, res) => {
                 usersList.push(doc.data());
             });
         }).catch((error) => {
-            res.status(501).json({status: `Error gettings Users ${error}`});
+            res.status(501).json({ status: `Error gettings Users ${error}` });
         });
     res.status(200).json(usersList);
 });
@@ -60,7 +60,7 @@ authRouter.post("/signUp", async (req, res) => {
             email,
             password: hashedPassword
         });
-        const token = jwt.sign({ username }, secret, { expiresIn: 60 * 60 });
+        const token = jwt.sign({ username }, secret, { expiresIn: 100 * 60 });
         res.json({ token });
     }
 });
@@ -72,7 +72,7 @@ authRouter.post("/signIn", async (req, res) => {
     const user = await db.collection("users").doc(username).get();
     const userSigned = await bcrypt.compare(password, user.data().password);
     if (userSigned) {
-        const token = jwt.sign({ username }, secret, { expiresIn: 60 * 60 });
+        const token = jwt.sign({ username }, secret, { expiresIn: 100 * 60 });
         res.json({ token });
     } else {
         res.json({ status: "User doesnot exists or check your credentials" });
