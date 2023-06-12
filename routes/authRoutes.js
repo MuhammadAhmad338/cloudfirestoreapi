@@ -41,7 +41,7 @@ authRouter.get('/alltheUsers', isAuthenticated, async (req, res) => {
         }).catch((error) => {
             res.status(501).json({status: `Error gettings Users ${error}`});
         });
-    res.status(200).json({usersList});
+    res.status(200).json(usersList);
 });
 
 authRouter.post("/signUp", async (req, res) => {
