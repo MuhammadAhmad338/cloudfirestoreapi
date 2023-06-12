@@ -4,7 +4,6 @@ const secret = "my-secret-key";
 const isAuthenticated = (req, res, next) => {
   // Check if the user is authenticated
   const token = req.headers["authorization"];
-  console.log(token);
   if (!token) {
     res.status(401).json("UnAuthorized!");
   }
