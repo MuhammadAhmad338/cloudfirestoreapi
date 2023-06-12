@@ -13,14 +13,18 @@ const db = new Firestore({
 });
 const secret = "my-secret-key";
 
-authRouter.get("/myUsers", isAuthenticated, (req, res) => {
+authRouter.get("/myUsers", isAuthenticated, async (req, res) => {
     // If the user is not authenticated, return an error
     if (!req.user) {
-    return res.status(401).send('Unauthorized123');
-  }
-  console.log(req.user.name);
-  // The user is authenticated, so return the user data
-  res.json(req.user);
+        return res.status(401).send('Unauthorized123');
+    }
+    // The user is authenticated, so return the user data
+    const user = await db.collection("users").doc(req.user.username).get();
+    if (!user.data()) {
+        res.status(401).json({ status: "User doesnot exists" });
+    } else {
+        res.status(200).json(user.data());
+    }
 });
 
 authRouter.post("/signUp", async (req, res) => {
