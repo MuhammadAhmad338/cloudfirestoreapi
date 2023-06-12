@@ -16,7 +16,7 @@ const secret = "my-secret-key";
 authRouter.get("/myUsers", isAuthenticated, async (req, res) => {
     // If the user is not authenticated, return an error
     if (!req.user) {
-         res.status(401).json('User Unauthorized!');
+        res.status(401).json('User Unauthorized!');
     }
     // The user is authenticated, so return the user data
     const user = await db.collection("users").doc(req.user.username).get();
@@ -28,15 +28,21 @@ authRouter.get("/myUsers", isAuthenticated, async (req, res) => {
 });
 
 authRouter.get('/alltheUsers', isAuthenticated, async (req, res) => {
+    var usersList = [];
     if (!req.user) {
         res.status(401).json({ status: 'User Unauthorized!' });
     }
-    const users = await db.collection("users").get();
-    if (!users.data()) {
-          res.status(401).json({ status: "Users doesnot exists"});
-    } else {
-        res.status(200).json(users.data());
-    }
+
+    await db.collection("users").get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                console.log(doc.id, "=>", doc.data());
+                usersList.push(doc.data());
+            });
+        }).catch((error) => {
+            res.status(501).json({status: `Error gettings Users ${error}`});
+        });
+    res.status(200).json({usersList});
 });
 
 authRouter.post("/signUp", async (req, res) => {
