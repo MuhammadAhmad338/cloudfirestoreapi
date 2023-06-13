@@ -29,9 +29,9 @@ router.get('/:breed', async (req, res) => {
     const querySnapshot = await query.get();
 
     if (querySnapshot.size > 0) {
-        res.json(querySnapshot.docs[0].data());
+        res.status(200).json(querySnapshot.docs[0].data());
     } else {
-        res.json({ status: 'Not Found' });
+        res.status(401).json({ status: 'Not Found' });
     }
 });
 
@@ -41,9 +41,9 @@ router.get('/:id', async (req, res) => {
     const querySnapshot = await query.get();
 
     if (querySnapshot.size > 0) {
-        res.json(querySnapshot.docs[0].data());
+        res.status(200).json(querySnapshot.docs[0].data());
     } else {
-        res.json({ status: 'Not Found!' });
+        res.status(401).json({ status: 'Not Found!' });
     }
 });
 
@@ -60,10 +60,10 @@ router.get("/", async (req, res) => {
                   type: doc.data().type,
                 };
               });
-              res.json(dogs);       
+              res.status(200).json(dogs);       
           });
     } catch (error) {
-        res.json({ status: 'Not Found!' });
+        res.status(401).json({ status: 'Not Found!' });
     }
 });
 
@@ -84,7 +84,7 @@ router.post("/", async (req, res) => {
     //var downloadUrl = await storage.bucket(bucketName).file(`${uuid.v4()}-${data.imageUrl}`).getSignedUrl(options);
    //  data.imageUrl = downloadUrl;
     await db.collection('dogs').doc(`${req.body.id}`).set(data);
-    res.json({ status: 'success', data: { dog: data } });
+    res.status(200).json({ status: 'success', data: { dog: data } });
 });
 
 router.put('/edit/:id', async (req, res) => {
@@ -98,9 +98,9 @@ router.put('/edit/:id', async (req, res) => {
         }
         await db.collection('dogs').doc(id).update(data);
 
-        res.json({ status: 'Success Updated', data: { updateDog: data } });
+        res.status(200).json({ status: 'Success Updated', data: { updateDog: data } });
     } catch (error) {
-        res.json({ status: `Some error occured ${error}` });
+        res.status(401).json({ status: `Some error occured ${error}` });
     }
 });
 
@@ -108,9 +108,9 @@ router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
         await db.collection('dogs').doc(id).delete();
-        res.json({ status: "Got Deleted" });
+        res.status(200).json({ status: "Got Deleted" });
     } catch (error) {
-        res.json({ status: `Some error Occured ${error}` });
+        res.status(401).json({ status: `Some error Occured ${error}` });
     }
 });
 

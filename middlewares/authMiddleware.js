@@ -9,7 +9,7 @@ const isAuthenticated = (req, res, next) => {
   }
 
   jwt.verify(token, secret, (err, user) => {
-    if (err) return res.json(err);
+    if (err) return res.status(401).json(err);
     req.user = user;
     next();
   });
