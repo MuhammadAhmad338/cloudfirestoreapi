@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const dotenv = require("dotenv");
 const Firestore = require("@google-cloud/firestore");
 const isAuthenticated = require("../middlewares/authMiddleware");
 const bcrypt = require("bcrypt");
@@ -11,7 +12,8 @@ const db = new Firestore({
     projectId: 'famous-rhythm-362419',
     keyFilename: path.join(__dirname, '../creds.json')
 });
-const secret = "my-secret-key";
+
+dotenv.config();
 
 authRouter.get("/myUsers", isAuthenticated, async (req, res) => {
     // If the user is not authenticated, return an error
@@ -51,7 +53,7 @@ authRouter.post("/signUp", async (req, res) => {
 
     const user = await db.collection("users").doc(username).get();
     if (user.data()) {
-        res.json({ status: "User already exists in the Database" });
+        res.status(401).json({ status: "User already exists in the Database" });
     } else {
         const hashedPassword = await bcrypt.hash(password, 10);
         //Create new user in the database cloud firstore database
@@ -61,7 +63,7 @@ authRouter.post("/signUp", async (req, res) => {
             password: hashedPassword
         });
         const token = jwt.sign({ username }, secret, { expiresIn: 100 * 60 });
-        res.json({ token });
+        res.status(200).json({ token });
     }
 });
 
@@ -72,11 +74,29 @@ authRouter.post("/signIn", async (req, res) => {
     const user = await db.collection("users").doc(username).get();
     const userSigned = await bcrypt.compare(password, user.data().password);
     if (userSigned) {
-        const token = jwt.sign({ username }, secret, { expiresIn: 100 * 60 });
-        res.json({ token });
+        const token = jwt.sign({ username }, process.env.SECRET, { expiresIn: 100 * 60 });
+        res.status(200).json({ token });
     } else {
-        res.json({ status: "User doesnot exists or check your credentials" });
+        res.status(401).json({ status: "User doesnot exists or check your credentials" });
     }
+});
+
+authRouter.post("/forgetPassword", async (req, res) => {
+    const myemail = req.body.email;
+    const password = req.body.password;
+
+    const snapshot = await db.collection("users").where("email", "==", myemail).get();
+    if (snapshot.empty) {
+        res.status(401).json({status: "Email doesnot exists please enter correct email"});
+        return;
+    }
+    snapshot.forEach(async (doc) => {
+        const newHashedPassword = await bcrypt.hash(password, 10);
+        await db.collection("users").doc(doc.data().username).update({
+            password: newHashedPassword
+        });
+    });
+    res.status(200).json({status: "Password has been reset"});
 });
 
 module.exports = authRouter;

@@ -39,6 +39,7 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id;
     const query = db.collection('dogs').where('id', '==', id);
     const querySnapshot = await query.get();
+
     if (querySnapshot.size > 0) {
         res.json(querySnapshot.docs[0].data());
     } else {
@@ -97,7 +98,7 @@ router.put('/edit/:id', async (req, res) => {
         }
         await db.collection('dogs').doc(id).update(data);
 
-        res.json({ status: 'Success updated', data: { updateDog: data } });
+        res.json({ status: 'Success Updated', data: { updateDog: data } });
     } catch (error) {
         res.json({ status: `Some error occured ${error}` });
     }
