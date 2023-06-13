@@ -70,6 +70,12 @@ authRouter.post("/signUp", async (req, res) => {
 authRouter.post("/signIn", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    
+    const snapshot = await db.collection("users").where("username", "==", username).get();
+    if (snapshot.empty) {
+        res.status(401).json({status: "Username is incorrect please enter correct username"});
+        return;
+    }
 
     const user = await db.collection("users").doc(username).get();
     const userSigned = await bcrypt.compare(password, user.data().password);
